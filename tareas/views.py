@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Proyecto, Tarea, Asignacion, Comentario
+from .models import Proyecto, Tarea, Asignacion, Comentario, Etiqueta, Usuario
 
 
 def index(request):
@@ -69,3 +69,44 @@ def ultimo_comentario(request, id_proyecto):
                   .first())
     return render(request, 'comentario/ultimo.html',
                   {'proyecto': proyecto, 'comentario': comentario})
+
+# Ejercicio 7: comentarios de una tarea que empiezan por una palabra y son de un año
+def comentarios_tarea(request, id_tarea, palabra, anyo):
+    tarea = get_object_or_404(Tarea, id=id_tarea)
+    comentarios = (Comentario.objects
+                   .select_related('autor')
+                   .filter(tarea=id_tarea,
+                           texto__startswith=palabra,
+                           fecha_comentario__year=anyo)
+                   .order_by('fecha_comentario'))
+    return render(request, 'comentario/lista.html',
+                  {'tarea': tarea, 'comentarios': comentarios,
+                   'palabra': palabra, 'anyo': anyo})
+
+
+# Ejercicio 8: etiquetas usadas en las tareas de un proyecto
+def etiquetas_proyecto(request, id_proyecto):
+    proyecto = get_object_or_404(Proyecto, id=id_proyecto)
+    etiquetas = (Etiqueta.objects
+                 .filter(tareas__proyecto=id_proyecto)
+                 .distinct())
+    return render(request, 'etiqueta/lista.html',
+                  {'proyecto': proyecto, 'etiquetas': etiquetas})
+
+
+# Ejercicio 9: usuarios que no están asignados a ninguna tarea
+def usuarios_sin_tarea(request):
+    usuarios = Usuario.objects.filter(tareas_asignadas=None)
+    return render(request, 'usuario/sin_tarea.html', {'usuarios': usuarios})
+
+def mi_error_400(request, exception=None):
+    return render(request, 'errores/400.html', status=400)
+
+def mi_error_403(request, exception=None):
+    return render(request, 'errores/403.html', status=403)
+
+def mi_error_404(request, exception=None):
+    return render(request, 'errores/404.html', status=404)
+
+def mi_error_500(request):
+    return render(request, 'errores/500.html', status=500)

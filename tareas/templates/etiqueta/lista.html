@@ -1,0 +1,9 @@
+<h1>Etiquetas usadas en {{ proyecto.nombre }}</h1>
+<ul>
+{% for e in etiquetas %}
+    <li>{{ e.nombre }}</li>
+{% empty %}
+    <li>Este proyecto no usa etiquetas.</li>
+{% endfor %}
+</ul>
+<a href="{% url 'index' %}">Volver al inicio</a>

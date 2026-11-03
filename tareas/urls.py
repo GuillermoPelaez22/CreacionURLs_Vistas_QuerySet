@@ -9,4 +9,10 @@ urlpatterns = [
     path('tareas/observaciones/<str:texto>/', views.tareas_observaciones, name='tareas_observaciones'),
     path('tareas/completadas/<int:anyo_inicio>/<int:anyo_fin>/', views.tareas_completadas, name='tareas_completadas'),
     path('proyecto/<int:id_proyecto>/ultimo-comentario/', views.ultimo_comentario, name='ultimo_comentario'),
+    path('tarea/<int:id_tarea>/comentarios/<str:palabra>/<int:anyo>/', views.comentarios_tarea, name='comentarios_tarea'),
+    path('proyecto/<int:id_proyecto>/etiquetas/', views.etiquetas_proyecto, name='etiquetas_proyecto'),
+    path('usuarios/sin-tarea/', views.usuarios_sin_tarea, name='usuarios_sin_tarea'),
+    path('probar/400/', views.probar_400),
+    path('probar/403/', views.probar_403),
+    path('probar/500/', views.probar_500),
 ]

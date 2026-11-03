@@ -6,4 +6,8 @@
     <li><a href="{% url 'tareas_observaciones' 'diseño' %}">Tareas con "diseño" en las observaciones</a></li>
     <li><a href="{% url 'tareas_completadas' 2023 2024 %}">Tareas completadas entre 2023 y 2024</a></li>
     <li><a href="{% url 'ultimo_comentario' 1 %}">Último comentario del proyecto 1</a></li>
+    <li><a href="{% url 'comentarios_tarea' 3 'Revisado' 2024 %}">Comentarios de la tarea 3 que empiezan por "Revisado" en 2024</a></li>
+    <li><a href="{% url 'etiquetas_proyecto' 2 %}">Etiquetas del proyecto 2</a></li>
+    <li><a href="{% url 'usuarios_sin_tarea' %}">Usuarios sin tarea</a></li>
+    <li><a href="/esta-pagina-no-existe/">Probar error 404</a></li>
 </ul>
