@@ -1,0 +1,12 @@
+<h1>Proyectos</h1>
+{% for p in proyectos %}
+    <h2>{{ p.nombre }}</h2>
+    <p>{{ p.descripcion }}</p>
+    <p>Inicio: {{ p.fecha_inicio }} | Creador: {{ p.creador.nombre }}</p>
+    <p>Tareas: {{ p.tareas.all|length }}</p>
+    <a href="{% url 'tareas_proyecto' p.id %}">Ver tareas</a>
+    <hr>
+{% empty %}
+    <p>No hay proyectos.</p>
+{% endfor %}
+<a href="{% url 'index' %}">Volver al inicio</a>

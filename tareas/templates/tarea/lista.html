@@ -1,0 +1,14 @@
+<h1>Tareas de {{ proyecto.nombre }}</h1>
+<ul>
+{% for t in tareas %}
+    <li>
+        <strong>{{ t.titulo }}</strong>
+        ({{ t.get_estado_display }}) · creada el {{ t.fecha_creacion|date:"d/m/Y" }}
+        · por {{ t.creador.nombre }}
+        · <a href="{% url 'usuarios_tarea' t.id %}">Ver usuarios</a>
+    </li>
+{% empty %}
+    <li>Este proyecto no tiene tareas.</li>
+{% endfor %}
+</ul>
+<a href="{% url 'index' %}">Volver al inicio</a>
