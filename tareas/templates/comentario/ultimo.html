@@ -1,0 +1,10 @@
+<h1>Último comentario en el proyecto {{ proyecto.nombre }}</h1>
+{% if comentario %}
+    <p>Usuario: <strong>{{ comentario.autor.nombre }}</strong></p>
+    <p>Tarea: {{ comentario.tarea.titulo }}</p>
+    <p>Comentario: {{ comentario.texto }}</p>
+    <p>Fecha: {{ comentario.fecha_comentario|date:"d/m/Y" }}</p>
+{% else %}
+    <p>Nadie ha comentado todavía en este proyecto.</p>
+{% endif %}
+<a href="{% url 'index' %}">Volver al inicio</a>

@@ -1,0 +1,13 @@
+<h1>Tareas completadas entre {{ anyo_inicio }} y {{ anyo_fin }}</h1>
+<ul>
+{% for t in tareas %}
+    <li>
+        <strong>{{ t.titulo }}</strong> ({{ t.proyecto.nombre }})
+        · creada el {{ t.fecha_creacion|date:"d/m/Y" }}
+        · {{ t.get_estado_display }}
+    </li>
+{% empty %}
+    <li>No hay tareas completadas en ese periodo.</li>
+{% endfor %}
+</ul>
+<a href="{% url 'index' %}">Volver al inicio</a>

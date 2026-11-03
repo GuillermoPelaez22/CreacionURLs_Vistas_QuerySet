@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Proyecto, Tarea, Asignacion
+from .models import Proyecto, Tarea, Asignacion, Comentario
 
 
 def index(request):
@@ -35,3 +35,37 @@ def usuarios_tarea(request, id_tarea):
                     .order_by('fecha_asignacion'))
     return render(request, 'tarea/usuarios.html',
                   {'tarea': tarea, 'asignaciones': asignaciones})
+    
+# Ejercicio 4: tareas con un texto en las observaciones de su asignación
+def tareas_observaciones(request, texto):
+    tareas = (Tarea.objects
+              .select_related('proyecto')
+              .filter(asignacion__observaciones__contains=texto)
+              .distinct())
+    return render(request, 'tarea/observaciones.html',
+                  {'tareas': tareas, 'texto': texto})
+
+
+# Ejercicio 5: tareas completadas, creadas entre dos años
+def tareas_completadas(request, anyo_inicio, anyo_fin):
+    tareas = (Tarea.objects
+              .select_related('proyecto')
+              .filter(estado='CO',
+                      fecha_creacion__year__gte=anyo_inicio,
+                      fecha_creacion__year__lte=anyo_fin)
+              .order_by('fecha_creacion'))
+    return render(request, 'tarea/completadas.html',
+                  {'tareas': tareas, 'anyo_inicio': anyo_inicio,
+                   'anyo_fin': anyo_fin})
+
+
+# Ejercicio 6: último usuario que ha comentado en una tarea de un proyecto
+def ultimo_comentario(request, id_proyecto):
+    proyecto = get_object_or_404(Proyecto, id=id_proyecto)
+    comentario = (Comentario.objects
+                  .select_related('autor', 'tarea')
+                  .filter(tarea__proyecto=id_proyecto)
+                  .order_by('-fecha_comentario')
+                  .first())
+    return render(request, 'comentario/ultimo.html',
+                  {'proyecto': proyecto, 'comentario': comentario})

@@ -3,4 +3,7 @@
     <li><a href="{% url 'lista_proyectos' %}">Lista de proyectos</a></li>
     <li><a href="{% url 'tareas_proyecto' 1 %}">Tareas del proyecto 1</a></li>
     <li><a href="{% url 'usuarios_tarea' 1 %}">Usuarios de la tarea 1</a></li>
+    <li><a href="{% url 'tareas_observaciones' 'diseño' %}">Tareas con "diseño" en las observaciones</a></li>
+    <li><a href="{% url 'tareas_completadas' 2023 2024 %}">Tareas completadas entre 2023 y 2024</a></li>
+    <li><a href="{% url 'ultimo_comentario' 1 %}">Último comentario del proyecto 1</a></li>
 </ul>
