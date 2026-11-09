@@ -12,7 +12,4 @@ urlpatterns = [
     path('tarea/<int:id_tarea>/comentarios/<str:palabra>/<int:anyo>/', views.comentarios_tarea, name='comentarios_tarea'),
     path('proyecto/<int:id_proyecto>/etiquetas/', views.etiquetas_proyecto, name='etiquetas_proyecto'),
     path('usuarios/sin-tarea/', views.usuarios_sin_tarea, name='usuarios_sin_tarea'),
-    path('probar/400/', views.probar_400),
-    path('probar/403/', views.probar_403),
-    path('probar/500/', views.probar_500),
 ]

@@ -67,3 +67,13 @@ class Comentario(models.Model):
 
     def __str__(self):
         return self.texto[:30]
+
+class PerfilUsuario(models.Model):
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE,
+                                   related_name='perfil')
+    telefono = models.CharField(max_length=15)
+    biografia = models.TextField(blank=True)
+    fecha_alta = models.DateField()
+
+    def __str__(self):
+        return 'Perfil de ' + self.usuario.nombre
