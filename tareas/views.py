@@ -7,11 +7,23 @@ def index(request):
 
 
 # Ejercicio 1: lista de proyectos con sus datos
+# Vista: muestra todos los proyectos con su creador (ManyToOne), sus tareas
+# (relación reversa) y, de cada tarea, su creador (ManyToOne) y sus etiquetas (ManyToMany)
 def lista_proyectos(request):
     proyectos = (Proyecto.objects
                  .select_related('creador')
-                 .prefetch_related('tareas')
+                 .prefetch_related('tareas__creador', 'tareas__etiquetas')
                  .all())
+    """
+    SELECT *
+    FROM tareas_proyecto p
+    INNER JOIN tareas_usuario u ON p.creador_id = u.id;
+
+    -- prefetch_related lanza una consulta extra por cada relación:
+    -- 1) tareas de los proyectos
+    -- 2) creador de cada tarea
+    -- 3) etiquetas de cada tarea (tabla intermedia tareas_tarea_etiquetas)
+    """
     return render(request, 'proyecto/lista.html', {'proyectos': proyectos})
 
 

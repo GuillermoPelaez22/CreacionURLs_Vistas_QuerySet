@@ -2,9 +2,23 @@
 {% for p in proyectos %}
     <h2>{{ p.nombre }}</h2>
     <p>{{ p.descripcion }}</p>
-    <p>Inicio: {{ p.fecha_inicio }} | Creador: {{ p.creador.nombre }}</p>
-    <p>Tareas: {{ p.tareas.all|length }}</p>
-    <a href="{% url 'tareas_proyecto' p.id %}">Ver tareas</a>
+    <p>Inicio: {{ p.fecha_inicio|date:"d/m/Y" }}</p>
+    <p>Creador: {{ p.creador.nombre }} ({{ p.creador.correo }})</p>
+
+    <h3>Tareas</h3>
+    <ul>
+    {% for t in p.tareas.all %}
+        <li>
+            <strong>{{ t.titulo }}</strong> ({{ t.get_estado_display }})
+            · creada el {{ t.fecha_creacion|date:"d/m/Y" }}
+            · por {{ t.creador.nombre }}
+            · Etiquetas:
+            {% for e in t.etiquetas.all %}{{ e.nombre }}{% if not forloop.last %}, {% endif %}{% empty %}ninguna{% endfor %}
+        </li>
+    {% empty %}
+        <li>Sin tareas.</li>
+    {% endfor %}
+    </ul>
     <hr>
 {% empty %}
     <p>No hay proyectos.</p>
