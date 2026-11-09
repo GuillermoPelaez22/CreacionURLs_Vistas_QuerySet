@@ -1,0 +1,43 @@
+<h1>{{ tarea.titulo }}</h1>
+<p>{{ tarea.descripcion }}</p>
+<p>Estado: {{ tarea.get_estado_display }}</p>
+<p>Creada el {{ tarea.fecha_creacion|date:"d/m/Y" }}</p>
+<p>Creador: {{ tarea.creador.nombre }} ({{ tarea.creador.correo }})</p>
+<p>Proyecto: {{ tarea.proyecto.nombre }} - {{ tarea.proyecto.descripcion }}
+   (inicio: {{ tarea.proyecto.fecha_inicio|date:"d/m/Y" }})</p>
+
+<h3>Etiquetas</h3>
+<ul>
+{% for e in tarea.etiquetas.all %}
+    <li>{{ e.nombre }}</li>
+{% empty %}
+    <li>Sin etiquetas.</li>
+{% endfor %}
+</ul>
+
+<h3>Usuarios asignados</h3>
+<ul>
+{% for a in tarea.asignacion_set.all %}
+    <li>
+        {{ a.usuario.nombre }} ({{ a.usuario.correo }})
+        · asignado el {{ a.fecha_asignacion|date:"d/m/Y" }}
+        · Observaciones: {{ a.observaciones }}
+    </li>
+{% empty %}
+    <li>Nadie asignado.</li>
+{% endfor %}
+</ul>
+
+<h3>Comentarios</h3>
+<ul>
+{% for c in tarea.comentarios.all %}
+    <li>
+        <strong>{{ c.autor.nombre }}</strong>: {{ c.texto }}
+        ({{ c.fecha_comentario|date:"d/m/Y" }})
+    </li>
+{% empty %}
+    <li>Sin comentarios.</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'index' %}">Volver al inicio</a>

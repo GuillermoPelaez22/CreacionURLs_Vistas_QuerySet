@@ -122,3 +122,27 @@ def mi_error_404(request, exception=None):
 
 def mi_error_500(request):
     return render(request, 'errores/500.html', status=500)
+
+# Vista: muestra una tarea concreta con su proyecto y su creador (ManyToOne),
+# sus etiquetas (ManyToMany), sus comentarios con su autor (relación reversa)
+# y los usuarios asignados con los datos de la asignación (tabla intermedia)
+def dame_tarea(request, id_tarea):
+    tarea = (Tarea.objects
+             .select_related('proyecto', 'creador')
+             .prefetch_related('etiquetas',
+                               'comentarios__autor',
+                               'asignacion_set__usuario')
+             .get(id=id_tarea))
+    """
+    SELECT *
+    FROM tareas_tarea t
+    INNER JOIN tareas_proyecto p ON t.proyecto_id = p.id
+    INNER JOIN tareas_usuario u ON t.creador_id = u.id
+    WHERE t.id = id_tarea;
+
+    -- prefetch_related lanza una consulta extra por cada relación:
+    -- 1) etiquetas (tabla intermedia tareas_tarea_etiquetas)
+    -- 2) comentarios de la tarea y el autor de cada uno
+    -- 3) asignaciones de la tarea (tabla intermedia tareas_asignacion) y su usuario
+    """
+    return render(request, 'tarea/detalle.html', {'tarea': tarea})

@@ -12,4 +12,5 @@ urlpatterns = [
     path('tarea/<int:id_tarea>/comentarios/<str:palabra>/<int:anyo>/', views.comentarios_tarea, name='comentarios_tarea'),
     path('proyecto/<int:id_proyecto>/etiquetas/', views.etiquetas_proyecto, name='etiquetas_proyecto'),
     path('usuarios/sin-tarea/', views.usuarios_sin_tarea, name='usuarios_sin_tarea'),
+    path('tarea/<int:id_tarea>/', views.dame_tarea, name='dame_tarea'),
 ]
