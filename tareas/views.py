@@ -58,14 +58,31 @@ def tareas_observaciones(request, texto):
                   {'tareas': tareas, 'texto': texto})
 
 
-# Ejercicio 5: tareas completadas, creadas entre dos años
+# Vista: muestra las tareas con estado "Completada" creadas entre dos años,
+# ordenadas por fecha de creación, con su proyecto y su creador (ManyToOne),
+# sus etiquetas (ManyToMany) y los usuarios asignados (tabla intermedia)
 def tareas_completadas(request, anyo_inicio, anyo_fin):
     tareas = (Tarea.objects
-              .select_related('proyecto')
+              .select_related('proyecto', 'creador')
+              .prefetch_related('etiquetas', 'asignacion_set__usuario')
               .filter(estado='CO',
                       fecha_creacion__year__gte=anyo_inicio,
                       fecha_creacion__year__lte=anyo_fin)
               .order_by('fecha_creacion'))
+    """
+    SELECT *
+    FROM tareas_tarea t
+    INNER JOIN tareas_proyecto p ON t.proyecto_id = p.id
+    INNER JOIN tareas_usuario u ON t.creador_id = u.id
+    WHERE t.estado = 'CO'
+      AND YEAR(t.fecha_creacion) >= anyo_inicio
+      AND YEAR(t.fecha_creacion) <= anyo_fin
+    ORDER BY t.fecha_creacion ASC;
+
+    -- prefetch_related lanza una consulta extra por cada relación:
+    -- 1) etiquetas (tabla intermedia tareas_tarea_etiquetas)
+    -- 2) asignaciones (tabla intermedia tareas_asignacion) y su usuario
+    """
     return render(request, 'tarea/completadas.html',
                   {'tareas': tareas, 'anyo_inicio': anyo_inicio,
                    'anyo_fin': anyo_fin})
