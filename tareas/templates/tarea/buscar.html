@@ -1,0 +1,33 @@
+<h1>Tareas que contienen "{{ texto }}" en el título o la descripción</h1>
+{% for t in tareas %}
+    <h2>{{ t.titulo }}</h2>
+    <p>{{ t.descripcion }}</p>
+    <p>Estado: {{ t.get_estado_display }} · creada el {{ t.fecha_creacion|date:"d/m/Y" }}</p>
+    <p>Creador: {{ t.creador.nombre }} ({{ t.creador.correo }})</p>
+    <p>Proyecto: {{ t.proyecto.nombre }} - {{ t.proyecto.descripcion }}</p>
+
+    <h3>Etiquetas</h3>
+    <ul>
+    {% for e in t.etiquetas.all %}
+        <li>{{ e.nombre }}</li>
+    {% empty %}
+        <li>Sin etiquetas.</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Usuarios asignados</h3>
+    <ul>
+    {% for a in t.asignacion_set.all %}
+        <li>
+            {{ a.usuario.nombre }} · asignado el {{ a.fecha_asignacion|date:"d/m/Y" }}
+            · Observaciones: {{ a.observaciones }}
+        </li>
+    {% empty %}
+        <li>Nadie asignado.</li>
+    {% endfor %}
+    </ul>
+    <hr>
+{% empty %}
+    <p>No hay tareas que contengan ese texto.</p>
+{% endfor %}
+<a href="{% url 'index' %}">Volver al inicio</a>

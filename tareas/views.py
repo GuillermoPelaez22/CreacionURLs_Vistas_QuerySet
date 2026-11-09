@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Proyecto, Tarea, Asignacion, Comentario, Etiqueta, Usuario
+from django.db.models import Q
 
 
 def index(request):
@@ -163,3 +164,27 @@ def dame_tarea(request, id_tarea):
     -- 3) asignaciones de la tarea (tabla intermedia tareas_asignacion) y su usuario
     """
     return render(request, 'tarea/detalle.html', {'tarea': tarea})
+
+# Vista: muestra las tareas cuyo título o descripción contienen un texto,
+# ordenadas de más nueva a más antigua, con su proyecto y su creador (ManyToOne),
+# sus etiquetas (ManyToMany) y los usuarios asignados (tabla intermedia)
+def buscar_tareas(request, texto):
+    tareas = (Tarea.objects
+              .select_related('proyecto', 'creador')
+              .prefetch_related('etiquetas', 'asignacion_set__usuario')
+              .filter(Q(titulo__contains=texto) | Q(descripcion__contains=texto))
+              .order_by('-fecha_creacion'))
+    """
+    SELECT *
+    FROM tareas_tarea t
+    INNER JOIN tareas_proyecto p ON t.proyecto_id = p.id
+    INNER JOIN tareas_usuario u ON t.creador_id = u.id
+    WHERE t.titulo LIKE '%texto%'
+       OR t.descripcion LIKE '%texto%'
+    ORDER BY t.fecha_creacion DESC;
+
+    -- prefetch_related lanza una consulta extra por cada relación:
+    -- 1) etiquetas (tabla intermedia tareas_tarea_etiquetas)
+    -- 2) asignaciones (tabla intermedia tareas_asignacion) y su usuario
+    """
+    return render(request, 'tarea/buscar.html', {'tareas': tareas, 'texto': texto})
