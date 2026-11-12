@@ -1,10 +1,21 @@
-<h1>Último comentario en el proyecto {{ proyecto.nombre }}</h1>
-{% if comentario %}
-    <p>Usuario: <strong>{{ comentario.autor.nombre }}</strong></p>
-    <p>Tarea: {{ comentario.tarea.titulo }}</p>
-    <p>Comentario: {{ comentario.texto }}</p>
+<h1>Último comentario del proyecto {{ id_proyecto }}</h1>
+{% for comentario in comentarios %}
+    <h2>Usuario</h2>
+    <p>{{ comentario.autor.nombre }} ({{ comentario.autor.correo }})</p>
+    <p>Teléfono: {{ comentario.autor.perfil.telefono }}</p>
+    <p>Biografía: {{ comentario.autor.perfil.biografia }}</p>
+    <p>Alta: {{ comentario.autor.perfil.fecha_alta|date:"d/m/Y" }}</p>
+
+    <h2>Comentario</h2>
+    <p>{{ comentario.texto }}</p>
     <p>Fecha: {{ comentario.fecha_comentario|date:"d/m/Y" }}</p>
-{% else %}
-    <p>Nadie ha comentado todavía en este proyecto.</p>
-{% endif %}
+
+    <h2>Tarea</h2>
+    <p>{{ comentario.tarea.titulo }} ({{ comentario.tarea.get_estado_display }})</p>
+
+    <h2>Proyecto</h2>
+    <p>{{ comentario.tarea.proyecto.nombre }} - {{ comentario.tarea.proyecto.descripcion }}</p>
+{% empty %}
+    <p>Este proyecto todavía no tiene comentarios.</p>
+{% endfor %}
 <a href="{% url 'index' %}">Volver al inicio</a>

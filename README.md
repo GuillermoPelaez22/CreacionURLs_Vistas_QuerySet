@@ -20,3 +20,13 @@
 - **URL:** `/tareas/buscar/<str:texto>/`
 - **Vista:** `buscar_tareas`
 - **Requisitos que cumple:** parámetro `str`, filtro con OR (`Q` con `|`) sobre título y descripción, `__contains` (LIKE), `order_by` descendente, ManyToOne (proyecto y creador, con `select_related`), ManyToMany (etiquetas), tabla intermedia (`Asignacion`) y `prefetch_related`.
+
+## URL 5: Último comentario de un proyecto
+- **URL:** `/proyecto/<int:id_proyecto>/ultimo-comentario/`
+- **Vista:** `ultimo_comentario`
+- **Requisitos que cumple:** parámetro entero, límite `[:1]`, `order_by` descendente, OneToOne (perfil del usuario, con `select_related`), ManyToOne (autor, tarea y proyecto, con `select_related`).
+
+## URL 6: Usuarios sin tarea asignada
+- **URL:** `/usuarios/sin-tarea/` (definida con `re_path`)
+- **Vista:** `usuarios_sin_tarea`
+- **Requisitos que cumple:** `re_path`, filtro con `None` en una tabla intermedia (`asignacion=None`), OneToOne (perfil, con `select_related`), relaciones reversas (`proyectos_creados`, `tareas_creadas`, `comentarios`, con `prefetch_related`).

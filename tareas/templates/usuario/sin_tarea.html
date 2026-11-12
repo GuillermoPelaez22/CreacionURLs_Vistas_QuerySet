@@ -1,9 +1,40 @@
 <h1>Usuarios sin ninguna tarea asignada</h1>
-<ul>
 {% for u in usuarios %}
-    <li>{{ u.nombre }} ({{ u.correo }})</li>
+    <h2>{{ u.nombre }} ({{ u.correo }})</h2>
+
+    <h3>Perfil</h3>
+    <p>Teléfono: {{ u.perfil.telefono }}</p>
+    <p>Biografía: {{ u.perfil.biografia }}</p>
+    <p>Alta: {{ u.perfil.fecha_alta|date:"d/m/Y" }}</p>
+
+    <h3>Proyectos creados</h3>
+    <ul>
+    {% for p in u.proyectos_creados.all %}
+        <li>{{ p.nombre }}</li>
+    {% empty %}
+        <li>Ninguno.</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Tareas creadas</h3>
+    <ul>
+    {% for t in u.tareas_creadas.all %}
+        <li>{{ t.titulo }} ({{ t.get_estado_display }})</li>
+    {% empty %}
+        <li>Ninguna.</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Comentarios</h3>
+    <ul>
+    {% for c in u.comentarios.all %}
+        <li>{{ c.texto }} ({{ c.fecha_comentario|date:"d/m/Y" }})</li>
+    {% empty %}
+        <li>Ninguno.</li>
+    {% endfor %}
+    </ul>
+    <hr>
 {% empty %}
-    <li>Todos los usuarios tienen alguna tarea.</li>
+    <p>Todos los usuarios tienen alguna tarea.</p>
 {% endfor %}
-</ul>
 <a href="{% url 'index' %}">Volver al inicio</a>

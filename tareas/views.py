@@ -89,16 +89,28 @@ def tareas_completadas(request, anyo_inicio, anyo_fin):
                    'anyo_fin': anyo_fin})
 
 
-# Ejercicio 6: último usuario que ha comentado en una tarea de un proyecto
+# Vista: muestra el último comentario escrito en cualquier tarea de un proyecto,
+# con su autor y el perfil del autor (OneToOne), la tarea y el proyecto (ManyToOne)
+# Vista: muestra el último comentario escrito en cualquier tarea de un proyecto,
+# con su autor y el perfil del autor (OneToOne), la tarea y el proyecto (ManyToOne)
 def ultimo_comentario(request, id_proyecto):
-    proyecto = get_object_or_404(Proyecto, id=id_proyecto)
-    comentario = (Comentario.objects
-                  .select_related('autor', 'tarea')
-                  .filter(tarea__proyecto=id_proyecto)
-                  .order_by('-fecha_comentario')
-                  .first())
+    comentarios = (Comentario.objects
+                   .select_related('autor__perfil', 'tarea__proyecto')
+                   .filter(tarea__proyecto=id_proyecto)
+                   .order_by('-fecha_comentario')[:1])
+    """
+    SELECT *
+    FROM tareas_comentario c
+    INNER JOIN tareas_usuario u ON c.autor_id = u.id
+    LEFT JOIN tareas_perfilusuario pu ON pu.usuario_id = u.id
+    INNER JOIN tareas_tarea t ON c.tarea_id = t.id
+    INNER JOIN tareas_proyecto p ON t.proyecto_id = p.id
+    WHERE t.proyecto_id = id_proyecto
+    ORDER BY c.fecha_comentario DESC
+    LIMIT 1;
+    """
     return render(request, 'comentario/ultimo.html',
-                  {'proyecto': proyecto, 'comentario': comentario})
+                  {'comentarios': comentarios, 'id_proyecto': id_proyecto})
 
 # Ejercicio 7: comentarios de una tarea que empiezan por una palabra y son de un año
 def comentarios_tarea(request, id_tarea, palabra, anyo):
@@ -124,9 +136,26 @@ def etiquetas_proyecto(request, id_proyecto):
                   {'proyecto': proyecto, 'etiquetas': etiquetas})
 
 
-# Ejercicio 9: usuarios que no están asignados a ninguna tarea
+# Vista: muestra los usuarios que no tienen ninguna asignación (tabla intermedia
+# Asignacion vacía), con su perfil (OneToOne), los proyectos y tareas que han
+# creado (relación reversa) y sus comentarios (relación reversa)
 def usuarios_sin_tarea(request):
-    usuarios = Usuario.objects.filter(tareas_asignadas=None)
+    usuarios = (Usuario.objects
+                .select_related('perfil')
+                .prefetch_related('proyectos_creados', 'tareas_creadas', 'comentarios')
+                .filter(asignacion=None))
+    """
+    SELECT *
+    FROM tareas_usuario u
+    LEFT JOIN tareas_perfilusuario pu ON pu.usuario_id = u.id
+    LEFT JOIN tareas_asignacion a ON a.usuario_id = u.id
+    WHERE a.id IS NULL;
+
+    -- prefetch_related lanza una consulta extra por cada relación reversa:
+    -- 1) proyectos creados por el usuario
+    -- 2) tareas creadas por el usuario
+    -- 3) comentarios escritos por el usuario
+    """
     return render(request, 'usuario/sin_tarea.html', {'usuarios': usuarios})
 
 def mi_error_400(request, exception=None):
