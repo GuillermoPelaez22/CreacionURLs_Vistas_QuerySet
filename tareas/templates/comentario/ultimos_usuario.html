@@ -1,0 +1,23 @@
+<h1>Últimos comentarios de {{ usuario.nombre }}</h1>
+<p>Correo: {{ usuario.correo }}</p>
+<p>Teléfono: {{ usuario.perfil.telefono }}</p>
+<p>Biografía: {{ usuario.perfil.biografia }}</p>
+<p>Alta: {{ usuario.perfil.fecha_alta|date:"d/m/Y" }}</p>
+
+{% for c in comentarios %}
+    <h2>{{ c.texto }}</h2>
+    <p>Comentado el {{ c.fecha_comentario|date:"d/m/Y" }}</p>
+
+    <h3>Tarea</h3>
+    <p>{{ c.tarea.titulo }} ({{ c.tarea.get_estado_display }})</p>
+    <p>{{ c.tarea.descripcion }}</p>
+    <p>Creador de la tarea: {{ c.tarea.creador.nombre }}</p>
+    <p>Proyecto: {{ c.tarea.proyecto.nombre }} - {{ c.tarea.proyecto.descripcion }}</p>
+    <p>Etiquetas:
+        {% for e in c.tarea.etiquetas.all %}{{ e.nombre }}{% if not forloop.last %}, {% endif %}{% empty %}ninguna{% endfor %}
+    </p>
+    <hr>
+{% empty %}
+    <p>Este usuario no ha escrito ningún comentario.</p>
+{% endfor %}
+<a href="{% url 'index' %}">Volver al inicio</a>

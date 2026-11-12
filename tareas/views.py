@@ -342,3 +342,38 @@ def asignaciones_observaciones(request, texto):
     """
     return render(request, 'asignacion/observaciones.html',
                   {'asignaciones': asignaciones, 'texto': texto})
+    
+# Vista: muestra los 5 últimos comentarios de un usuario, ordenados del más reciente al más
+# antiguo, con el perfil del usuario (OneToOne), la tarea con su proyecto y su creador
+# (ManyToOne) y las etiquetas de la tarea (ManyToMany)
+def ultimos_comentarios_usuario(request, id_usuario):
+    usuario = (Usuario.objects
+               .select_related('perfil')
+               .get(id=id_usuario))
+    """
+    SELECT *
+    FROM tareas_usuario u
+    LEFT JOIN tareas_perfilusuario pu ON pu.usuario_id = u.id
+    WHERE u.id = id_usuario;
+    """
+
+    comentarios = (Comentario.objects
+                   .select_related('tarea__proyecto', 'tarea__creador')
+                   .prefetch_related('tarea__etiquetas')
+                   .filter(autor=id_usuario)
+                   .order_by('-fecha_comentario')[:5])
+    """
+    SELECT *
+    FROM tareas_comentario c
+    INNER JOIN tareas_tarea t ON c.tarea_id = t.id
+    INNER JOIN tareas_proyecto p ON t.proyecto_id = p.id
+    INNER JOIN tareas_usuario u ON t.creador_id = u.id
+    WHERE c.autor_id = id_usuario
+    ORDER BY c.fecha_comentario DESC
+    LIMIT 5;
+
+    -- prefetch_related lanza una consulta extra para las etiquetas de las tareas
+    -- (tabla intermedia tareas_tarea_etiquetas)
+    """
+    return render(request, 'comentario/ultimos_usuario.html',
+                  {'usuario': usuario, 'comentarios': comentarios})

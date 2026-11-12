@@ -16,5 +16,5 @@ urlpatterns = [
     path('tareas/buscar/<str:texto>/', views.buscar_tareas, name='buscar_tareas'),
     path('usuario/<int:id_usuario>/', views.ficha_usuario, name='ficha_usuario'),
     path('proyecto/<int:id_proyecto>/estadisticas/', views.estadisticas_proyecto, name='estadisticas_proyecto'),
-    path('asignaciones/observaciones/<str:texto>/', views.asignaciones_observaciones, name='asignaciones_observaciones'),
+    path('asignaciones/observaciones/<str:texto>/', views.asignaciones_observaciones, name='asignaciones_observaciones'),        path('usuario/<int:id_usuario>/comentarios/', views.ultimos_comentarios_usuario, name='ultimos_comentarios_usuario'),
 ]

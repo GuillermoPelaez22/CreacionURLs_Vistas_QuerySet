@@ -47,3 +47,8 @@
 - **URL:** `/asignaciones/observaciones/<str:texto>/`
 - **Vista:** `asignaciones_observaciones`
 - **Requisitos que cumple:** parámetro `str`, tabla intermedia (`Asignacion`), `__contains` (LIKE), `order_by` descendente, OneToOne (perfil del usuario, con `select_related`), ManyToOne (usuario, tarea, proyecto y creador, con `select_related`), ManyToMany (etiquetas de la tarea, con `prefetch_related`).
+
+## URL 10: Últimos 5 comentarios de un usuario
+- **URL:** `/usuario/<int:id_usuario>/comentarios/`
+- **Vista:** `ultimos_comentarios_usuario`
+- **Requisitos que cumple:** parámetro entero, `get()`, `order_by` descendente, límite `[:5]`, OneToOne (perfil del usuario, con `select_related`), ManyToOne (tarea, proyecto y creador, con `select_related`), ManyToMany (etiquetas de la tarea, con `prefetch_related`).
