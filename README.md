@@ -30,3 +30,9 @@
 - **URL:** `/usuarios/sin-tarea/` (definida con `re_path`)
 - **Vista:** `usuarios_sin_tarea`
 - **Requisitos que cumple:** `re_path`, filtro con `None` en una tabla intermedia (`asignacion=None`), OneToOne (perfil, con `select_related`), relaciones reversas (`proyectos_creados`, `tareas_creadas`, `comentarios`, con `prefetch_related`).
+
+## URL 7: Ficha de un usuario
+- **URL:** `/usuario/<int:id_usuario>/`
+- **Vista:** `ficha_usuario`
+- **Requisitos que cumple:** parámetro entero, `get()`, OneToOne (perfil, con `select_related`), relaciones reversas (`proyectos_creados`, `tareas_creadas`, `comentarios`), tabla intermedia (`asignacion_set`), `prefetch_related` y `Prefetch` con `order_by`.
+- **Explicación:** `Prefetch` permite personalizar la consulta que lanza `prefetch_related`. Aquí se usa para traer las asignaciones y los comentarios del usuario ya ordenados por fecha descendente y con su tarea y proyecto cargados (`select_related`), evitando consultas adicionales.

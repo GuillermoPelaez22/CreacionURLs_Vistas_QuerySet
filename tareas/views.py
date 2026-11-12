@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Proyecto, Tarea, Asignacion, Comentario, Etiqueta, Usuario
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 
 
 def index(request):
@@ -217,3 +217,46 @@ def buscar_tareas(request, texto):
     -- 2) asignaciones (tabla intermedia tareas_asignacion) y su usuario
     """
     return render(request, 'tarea/buscar.html', {'tareas': tareas, 'texto': texto})
+
+# Vista: muestra la ficha de un usuario con su perfil (OneToOne), los proyectos
+# y tareas que ha creado (relación reversa), las tareas que tiene asignadas con
+# los datos de la asignación (tabla intermedia) y sus comentarios (relación reversa)
+def ficha_usuario(request, id_usuario):
+    usuario = (Usuario.objects
+               .select_related('perfil')
+               .prefetch_related('proyectos_creados',
+                                 'tareas_creadas',
+                                 Prefetch('asignacion_set',
+                                          queryset=Asignacion.objects
+                                          .select_related('tarea__proyecto')
+                                          .order_by('-fecha_asignacion')),
+                                 Prefetch('comentarios',
+                                          queryset=Comentario.objects
+                                          .select_related('tarea')
+                                          .order_by('-fecha_comentario')))
+               .get(id=id_usuario))
+    """
+    SELECT *
+    FROM tareas_usuario u
+    LEFT JOIN tareas_perfilusuario pu ON pu.usuario_id = u.id
+    WHERE u.id = id_usuario;
+
+    -- prefetch_related lanza una consulta extra por cada relación:
+    -- 1) proyectos creados por el usuario
+    -- 2) tareas creadas por el usuario
+    -- 3) asignaciones del usuario (tabla intermedia) con su tarea y el proyecto,
+    --    ordenadas por fecha de asignación descendente:
+    SELECT *
+    FROM tareas_asignacion a
+    INNER JOIN tareas_tarea t ON a.tarea_id = t.id
+    INNER JOIN tareas_proyecto p ON t.proyecto_id = p.id
+    WHERE a.usuario_id = id_usuario
+    ORDER BY a.fecha_asignacion DESC;
+    -- 4) comentarios del usuario con su tarea, ordenados por fecha descendente:
+    SELECT *
+    FROM tareas_comentario c
+    INNER JOIN tareas_tarea t ON c.tarea_id = t.id
+    WHERE c.autor_id = id_usuario
+    ORDER BY c.fecha_comentario DESC;
+    """
+    return render(request, 'usuario/ficha.html', {'usuario': usuario})

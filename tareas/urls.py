@@ -14,4 +14,5 @@ urlpatterns = [
     re_path(r'^usuarios/sin-tarea/$', views.usuarios_sin_tarea, name='usuarios_sin_tarea'),
     path('tarea/<int:id_tarea>/', views.dame_tarea, name='dame_tarea'),
     path('tareas/buscar/<str:texto>/', views.buscar_tareas, name='buscar_tareas'),
+    path('usuario/<int:id_usuario>/', views.ficha_usuario, name='ficha_usuario'),
 ]

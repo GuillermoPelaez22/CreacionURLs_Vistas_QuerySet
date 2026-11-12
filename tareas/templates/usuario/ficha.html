@@ -1,0 +1,53 @@
+<h1>{{ usuario.nombre }}</h1>
+<p>Correo: {{ usuario.correo }}</p>
+
+<h2>Perfil</h2>
+<p>Teléfono: {{ usuario.perfil.telefono }}</p>
+<p>Biografía: {{ usuario.perfil.biografia }}</p>
+<p>Alta: {{ usuario.perfil.fecha_alta|date:"d/m/Y" }}</p>
+
+<h2>Proyectos creados</h2>
+<ul>
+{% for p in usuario.proyectos_creados.all %}
+    <li>{{ p.nombre }} - {{ p.descripcion }} (inicio: {{ p.fecha_inicio|date:"d/m/Y" }})</li>
+{% empty %}
+    <li>Ninguno.</li>
+{% endfor %}
+</ul>
+
+<h2>Tareas creadas</h2>
+<ul>
+{% for t in usuario.tareas_creadas.all %}
+    <li>{{ t.titulo }} ({{ t.get_estado_display }}) · {{ t.fecha_creacion|date:"d/m/Y" }}</li>
+{% empty %}
+    <li>Ninguna.</li>
+{% endfor %}
+</ul>
+
+<h2>Tareas asignadas</h2>
+<ul>
+{% for a in usuario.asignacion_set.all %}
+    <li>
+        {{ a.tarea.titulo }} ({{ a.tarea.get_estado_display }})
+        · Proyecto: {{ a.tarea.proyecto.nombre }}
+        · asignada el {{ a.fecha_asignacion|date:"d/m/Y" }}
+        · Observaciones: {{ a.observaciones }}
+    </li>
+{% empty %}
+    <li>Ninguna.</li>
+{% endfor %}
+</ul>
+
+<h2>Comentarios</h2>
+<ul>
+{% for c in usuario.comentarios.all %}
+    <li>
+        En "{{ c.tarea.titulo }}": {{ c.texto }}
+        ({{ c.fecha_comentario|date:"d/m/Y" }})
+    </li>
+{% empty %}
+    <li>Ninguno.</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'index' %}">Volver al inicio</a>
