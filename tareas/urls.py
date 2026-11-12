@@ -17,4 +17,15 @@ urlpatterns = [
     path('usuario/<int:id_usuario>/', views.ficha_usuario, name='ficha_usuario'),
     path('proyecto/<int:id_proyecto>/estadisticas/', views.estadisticas_proyecto, name='estadisticas_proyecto'),
     path('asignaciones/observaciones/<str:texto>/', views.asignaciones_observaciones, name='asignaciones_observaciones'),        path('usuario/<int:id_usuario>/comentarios/', views.ultimos_comentarios_usuario, name='ultimos_comentarios_usuario'),
+    path('error/400/', views.mi_error_400, name='error_400'),
+    path('error/403/', views.mi_error_403, name='error_403'),
+    path('error/500/', views.mi_error_500, name='error_500'),
+    path('error/400/', views.mi_error_400, name='error_400'),
+    path('error/403/', views.mi_error_403, name='error_403'),
+    path('error/500/', views.mi_error_500, name='error_500'),
 ]
+
+handler400 = 'tareas.views.mi_error_400'
+handler403 = 'tareas.views.mi_error_403'
+handler404 = 'tareas.views.mi_error_404'
+handler500 = 'tareas.views.mi_error_500'

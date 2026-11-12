@@ -52,3 +52,9 @@
 - **URL:** `/usuario/<int:id_usuario>/comentarios/`
 - **Vista:** `ultimos_comentarios_usuario`
 - **Requisitos que cumple:** parámetro entero, `get()`, `order_by` descendente, límite `[:5]`, OneToOne (perfil del usuario, con `select_related`), ManyToOne (tarea, proyecto y creador, con `select_related`), ManyToMany (etiquetas de la tarea, con `prefetch_related`).
+
+## Páginas de error personalizadas
+- **Errores:** 400, 403, 404 y 500, con las plantillas `errores/400.html`, `403.html`, `404.html` y `500.html`.
+- **Vistas:** `mi_error_400`, `mi_error_403`, `mi_error_404` y `mi_error_500`, cada una con el código de estado correspondiente.
+- **Configuración:** los `handler400`, `handler403`, `handler404` y `handler500` de `mysite/urls.py` indican a Django qué vista usar. Solo funcionan con `DEBUG = False`.
+- **Cómo verlas:** desde el index hay un enlace por cada error. El 404 es real (URL que no existe); el 400, 403 y 500 llaman directamente a su vista de error.

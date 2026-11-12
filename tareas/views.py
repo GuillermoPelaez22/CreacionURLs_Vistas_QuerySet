@@ -158,15 +158,19 @@ def usuarios_sin_tarea(request):
     """
     return render(request, 'usuario/sin_tarea.html', {'usuarios': usuarios})
 
+# Vista: página personalizada para el error 400 (petición incorrecta)
 def mi_error_400(request, exception=None):
     return render(request, 'errores/400.html', status=400)
 
+# Vista: página personalizada para el error 403 (acceso prohibido)
 def mi_error_403(request, exception=None):
     return render(request, 'errores/403.html', status=403)
 
+# Vista: página personalizada para el error 404 (página no encontrada)
 def mi_error_404(request, exception=None):
     return render(request, 'errores/404.html', status=404)
 
+# Vista: página personalizada para el error 500 (error interno del servidor)
 def mi_error_500(request):
     return render(request, 'errores/500.html', status=500)
 

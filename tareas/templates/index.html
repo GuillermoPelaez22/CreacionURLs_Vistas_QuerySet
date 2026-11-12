@@ -10,4 +10,8 @@
     <li>URL 8: <a href="{% url 'estadisticas_proyecto' 7 %}">Estadísticas del proyecto 7</a></li>
     <li>URL 9: <a href="{% url 'asignaciones_observaciones' 'diseño' %}">Asignaciones con "diseño" en las observaciones</a></li>
     <li>URL 10: <a href="{% url 'ultimos_comentarios_usuario' 1 %}">Últimos 5 comentarios del usuario 1</a></li>    <li><a href="/esta-pagina-no-existe/">Probar error 404</a></li>
+    <li>Error 400: <a href="{% url 'error_400' %}">Página de error 400</a></li>
+    <li>Error 403: <a href="{% url 'error_403' %}">Página de error 403</a></li>
+    <li>Error 404: <a href="/esta-pagina-no-existe/">Página de error 404</a></li>
+    <li>Error 500: <a href="{% url 'error_500' %}">Página de error 500</a></li>
 </ul>
