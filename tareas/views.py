@@ -1,6 +1,6 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Proyecto, Tarea, Asignacion, Comentario, Etiqueta, Usuario
+from django.shortcuts import render
 from django.db.models import Q, Prefetch, Count, Min, Max
+from .models import Proyecto, Tarea, Asignacion, Comentario, Usuario
 
 
 def index(request):
@@ -26,28 +26,6 @@ def lista_proyectos(request):
     -- 3) etiquetas de cada tarea (tabla intermedia tareas_tarea_etiquetas)
     """
     return render(request, 'proyecto/lista.html', {'proyectos': proyectos})
-
-
-# Ejercicio 2: tareas de un proyecto, de más nueva a más antigua
-def tareas_proyecto(request, id_proyecto):
-    proyecto = get_object_or_404(Proyecto, id=id_proyecto)
-    tareas = (Tarea.objects
-              .select_related('creador')
-              .filter(proyecto=id_proyecto)
-              .order_by('-fecha_creacion'))
-    return render(request, 'tarea/lista.html',
-                  {'proyecto': proyecto, 'tareas': tareas})
-
-
-# Ejercicio 3: usuarios asignados a una tarea, por fecha de asignación ascendente
-def usuarios_tarea(request, id_tarea):
-    tarea = get_object_or_404(Tarea, id=id_tarea)
-    asignaciones = (Asignacion.objects
-                    .select_related('usuario')
-                    .filter(tarea=id_tarea)
-                    .order_by('fecha_asignacion'))
-    return render(request, 'tarea/usuarios.html',
-                  {'tarea': tarea, 'asignaciones': asignaciones})
     
 # Ejercicio 4: tareas con un texto en las observaciones de su asignación
 def tareas_observaciones(request, texto):
@@ -111,30 +89,6 @@ def ultimo_comentario(request, id_proyecto):
     """
     return render(request, 'comentario/ultimo.html',
                   {'comentarios': comentarios, 'id_proyecto': id_proyecto})
-
-# Ejercicio 7: comentarios de una tarea que empiezan por una palabra y son de un año
-def comentarios_tarea(request, id_tarea, palabra, anyo):
-    tarea = get_object_or_404(Tarea, id=id_tarea)
-    comentarios = (Comentario.objects
-                   .select_related('autor')
-                   .filter(tarea=id_tarea,
-                           texto__startswith=palabra,
-                           fecha_comentario__year=anyo)
-                   .order_by('fecha_comentario'))
-    return render(request, 'comentario/lista.html',
-                  {'tarea': tarea, 'comentarios': comentarios,
-                   'palabra': palabra, 'anyo': anyo})
-
-
-# Ejercicio 8: etiquetas usadas en las tareas de un proyecto
-def etiquetas_proyecto(request, id_proyecto):
-    proyecto = get_object_or_404(Proyecto, id=id_proyecto)
-    etiquetas = (Etiqueta.objects
-                 .filter(tareas__proyecto=id_proyecto)
-                 .distinct())
-    return render(request, 'etiqueta/lista.html',
-                  {'proyecto': proyecto, 'etiquetas': etiquetas})
-
 
 # Vista: muestra los usuarios que no tienen ninguna asignación (tabla intermedia
 # Asignacion vacía), con su perfil (OneToOne), los proyectos y tareas que han
