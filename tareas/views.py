@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Proyecto, Tarea, Asignacion, Comentario, Etiqueta, Usuario
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, Count, Min, Max
 
 
 def index(request):
@@ -260,3 +260,59 @@ def ficha_usuario(request, id_usuario):
     ORDER BY c.fecha_comentario DESC;
     """
     return render(request, 'usuario/ficha.html', {'usuario': usuario})
+
+# Vista: muestra las estadísticas de un proyecto usando aggregate (número de tareas,
+# fecha de la primera y la última, número de comentarios y de asignaciones), junto con
+# los datos del proyecto, su creador (ManyToOne) y sus tareas con etiquetas (relación reversa
+# y ManyToMany)
+def estadisticas_proyecto(request, id_proyecto):
+    proyecto = (Proyecto.objects
+                .select_related('creador')
+                .prefetch_related('tareas__etiquetas')
+                .get(id=id_proyecto))
+    """
+    SELECT *
+    FROM tareas_proyecto p
+    INNER JOIN tareas_usuario u ON p.creador_id = u.id
+    WHERE p.id = id_proyecto;
+    -- más una consulta extra por cada relación del prefetch_related (tareas y etiquetas)
+    """
+
+    estadisticas_tareas = (Tarea.objects
+                           .filter(proyecto=id_proyecto)
+                           .aggregate(total=Count('id'),
+                                      primera=Min('fecha_creacion'),
+                                      ultima=Max('fecha_creacion')))
+    """
+    SELECT COUNT(id), MIN(fecha_creacion), MAX(fecha_creacion)
+    FROM tareas_tarea
+    WHERE proyecto_id = id_proyecto;
+    """
+
+    estadisticas_comentarios = (Comentario.objects
+                                .filter(tarea__proyecto=id_proyecto)
+                                .aggregate(total=Count('id')))
+    """
+    SELECT COUNT(c.id)
+    FROM tareas_comentario c
+    INNER JOIN tareas_tarea t ON c.tarea_id = t.id
+    WHERE t.proyecto_id = id_proyecto;
+    """
+
+    estadisticas_asignaciones = (Asignacion.objects
+                                 .filter(tarea__proyecto=id_proyecto)
+                                 .aggregate(total=Count('id'),
+                                            primera=Min('fecha_asignacion'),
+                                            ultima=Max('fecha_asignacion')))
+    """
+    SELECT COUNT(a.id), MIN(a.fecha_asignacion), MAX(a.fecha_asignacion)
+    FROM tareas_asignacion a
+    INNER JOIN tareas_tarea t ON a.tarea_id = t.id
+    WHERE t.proyecto_id = id_proyecto;
+    """
+
+    return render(request, 'proyecto/estadisticas.html',
+                  {'proyecto': proyecto,
+                   'estadisticas_tareas': estadisticas_tareas,
+                   'estadisticas_comentarios': estadisticas_comentarios,
+                   'estadisticas_asignaciones': estadisticas_asignaciones})

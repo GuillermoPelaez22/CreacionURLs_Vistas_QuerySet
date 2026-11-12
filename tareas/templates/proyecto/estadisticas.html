@@ -1,0 +1,33 @@
+<h1>Estadísticas del proyecto {{ proyecto.nombre }}</h1>
+<p>{{ proyecto.descripcion }}</p>
+<p>Inicio: {{ proyecto.fecha_inicio|date:"d/m/Y" }}</p>
+<p>Creador: {{ proyecto.creador.nombre }} ({{ proyecto.creador.correo }})</p>
+
+<h2>Tareas</h2>
+<p>Total de tareas: {{ estadisticas_tareas.total }}</p>
+<p>Primera tarea creada: {{ estadisticas_tareas.primera|date:"d/m/Y" }}</p>
+<p>Última tarea creada: {{ estadisticas_tareas.ultima|date:"d/m/Y" }}</p>
+
+<h2>Comentarios</h2>
+<p>Total de comentarios: {{ estadisticas_comentarios.total }}</p>
+
+<h2>Asignaciones</h2>
+<p>Total de asignaciones: {{ estadisticas_asignaciones.total }}</p>
+<p>Primera asignación: {{ estadisticas_asignaciones.primera|date:"d/m/Y" }}</p>
+<p>Última asignación: {{ estadisticas_asignaciones.ultima|date:"d/m/Y" }}</p>
+
+<h2>Listado de tareas</h2>
+<ul>
+{% for t in proyecto.tareas.all %}
+    <li>
+        <strong>{{ t.titulo }}</strong> ({{ t.get_estado_display }})
+        · {{ t.fecha_creacion|date:"d/m/Y" }}
+        · Etiquetas:
+        {% for e in t.etiquetas.all %}{{ e.nombre }}{% if not forloop.last %}, {% endif %}{% empty %}ninguna{% endfor %}
+    </li>
+{% empty %}
+    <li>Este proyecto no tiene tareas.</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'index' %}">Volver al inicio</a>
