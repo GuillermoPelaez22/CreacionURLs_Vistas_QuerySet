@@ -316,3 +316,29 @@ def estadisticas_proyecto(request, id_proyecto):
                    'estadisticas_tareas': estadisticas_tareas,
                    'estadisticas_comentarios': estadisticas_comentarios,
                    'estadisticas_asignaciones': estadisticas_asignaciones})
+    
+    # Vista: muestra las asignaciones (tabla intermedia) cuyas observaciones contienen un texto,
+# de la más reciente a la más antigua, con el usuario asignado y su perfil (OneToOne),
+# la tarea con su proyecto y su creador (ManyToOne) y las etiquetas de la tarea (ManyToMany)
+def asignaciones_observaciones(request, texto):
+    asignaciones = (Asignacion.objects
+                    .select_related('usuario__perfil', 'tarea__proyecto', 'tarea__creador')
+                    .prefetch_related('tarea__etiquetas')
+                    .filter(observaciones__contains=texto)
+                    .order_by('-fecha_asignacion'))
+    """
+    SELECT *
+    FROM tareas_asignacion a
+    INNER JOIN tareas_usuario u ON a.usuario_id = u.id
+    LEFT JOIN tareas_perfilusuario pu ON pu.usuario_id = u.id
+    INNER JOIN tareas_tarea t ON a.tarea_id = t.id
+    INNER JOIN tareas_proyecto p ON t.proyecto_id = p.id
+    INNER JOIN tareas_usuario c ON t.creador_id = c.id
+    WHERE a.observaciones LIKE '%texto%'
+    ORDER BY a.fecha_asignacion DESC;
+
+    -- prefetch_related lanza una consulta extra para las etiquetas de las tareas
+    -- (tabla intermedia tareas_tarea_etiquetas)
+    """
+    return render(request, 'asignacion/observaciones.html',
+                  {'asignaciones': asignaciones, 'texto': texto})

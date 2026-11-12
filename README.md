@@ -42,3 +42,8 @@
 - **Vista:** `estadisticas_proyecto`
 - **Requisitos que cumple:** parámetro entero, `get()`, `aggregate`, ManyToOne (creador, con `select_related`), relación reversa (`tareas`), ManyToMany (etiquetas) y `prefetch_related`.
 - **Explicación de código no visto en clase (`aggregate`, `Count`, `Min`, `Max`):** `aggregate()` calcula un valor sobre todas las filas de un QuerySet y devuelve un diccionario, no un QuerySet. Las funciones que se le pasan se importan de `django.db.models`: `Count` cuenta filas (`COUNT` en SQL), `Min` obtiene el valor más pequeño (`MIN`) y `Max` el más grande (`MAX`). Cada argumento con nombre es una clave del diccionario resultante, por ejemplo `aggregate(total=Count('id'))` devuelve `{'total': 4}`. Se usa para calcular el número de tareas, comentarios y asignaciones del proyecto y las fechas de la primera y la última tarea y asignación.
+
+## URL 9: Asignaciones con un texto en las observaciones
+- **URL:** `/asignaciones/observaciones/<str:texto>/`
+- **Vista:** `asignaciones_observaciones`
+- **Requisitos que cumple:** parámetro `str`, tabla intermedia (`Asignacion`), `__contains` (LIKE), `order_by` descendente, OneToOne (perfil del usuario, con `select_related`), ManyToOne (usuario, tarea, proyecto y creador, con `select_related`), ManyToMany (etiquetas de la tarea, con `prefetch_related`).

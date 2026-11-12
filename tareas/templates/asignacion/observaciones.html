@@ -1,0 +1,24 @@
+<h1>Asignaciones con "{{ texto }}" en las observaciones</h1>
+{% for a in asignaciones %}
+    <h2>{{ a.tarea.titulo }}</h2>
+    <p>Observaciones: {{ a.observaciones }}</p>
+    <p>Asignada el {{ a.fecha_asignacion|date:"d/m/Y" }}</p>
+
+    <h3>Usuario asignado</h3>
+    <p>{{ a.usuario.nombre }} ({{ a.usuario.correo }})</p>
+    <p>Teléfono: {{ a.usuario.perfil.telefono }}</p>
+    <p>Biografía: {{ a.usuario.perfil.biografia }}</p>
+
+    <h3>Tarea</h3>
+    <p>{{ a.tarea.descripcion }}</p>
+    <p>Estado: {{ a.tarea.get_estado_display }} · creada el {{ a.tarea.fecha_creacion|date:"d/m/Y" }}</p>
+    <p>Creador de la tarea: {{ a.tarea.creador.nombre }}</p>
+    <p>Proyecto: {{ a.tarea.proyecto.nombre }} - {{ a.tarea.proyecto.descripcion }}</p>
+    <p>Etiquetas:
+        {% for e in a.tarea.etiquetas.all %}{{ e.nombre }}{% if not forloop.last %}, {% endif %}{% empty %}ninguna{% endfor %}
+    </p>
+    <hr>
+{% empty %}
+    <p>No hay asignaciones con ese texto en las observaciones.</p>
+{% endfor %}
+<a href="{% url 'index' %}">Volver al inicio</a>
